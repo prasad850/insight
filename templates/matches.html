@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cricket Live Scores</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .match-section {
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .match-card {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .match-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .live-card {
+            border-left: 4px solid #2ecc71;
+            background-color: #f0fff4;
+        }
+        .upcoming-card {
+            border-left: 4px solid #f39c12;
+            background-color: #fffaf0;
+        }
+        .completed-card {
+            border-left: 4px solid #7f8c8d;
+            background-color: #f5f5f5;
+        }
+        .match-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .live-status {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .upcoming-status {
+            background-color: #f39c12;
+            color: white;
+        }
+        .completed-status {
+            background-color: #7f8c8d;
+            color: white;
+        }
+        .teams {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 8px 0;
+            color: #2c3e50;
+        }
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .match-name {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .match-score {
+            font-family: 'Courier New', monospace;
+            background: #eee;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        .match-venue {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .no-matches {
+            color: #7f8c8d;
+            text-align: center;
+            padding: 20px;
+        }
+        .last-updated {
+            text-align: right;
+            color: #95a5a6;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        .series-name {
+            color: #9b59b6;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cricket me-2" viewBox="0 0 16 16">
+                    <path d="M11.5 2.5a.5.5 0 0 1 .5-.5c.862 0 1.573.24 2.125.627.543.384.875.946.875 1.554 0 .606-.323 1.16-.875 1.545-.552.388-1.263.624-2.125.624a.5.5 0 0 1-.5-.5v-1.71l-1.4-.7-1.245 2.24a.5.5 0 0 1-.23.253l-2.955 1.58a.5.5 0 0 1-.586-.059L.5 5.5a.5.5 0 0 1 .146-.354l3.53-3.53a.5.5 0 0 1 .354-.146h1.293a.5.5 0 0 1 .253.115l2.412 1.793a.5.5 0 0 1 .116.293v1.677l1.4.7zm-1 .5v1.82a.5.5 0 0 1-.116.293L8.5 7.5v.5a.5.5 0 0 1-.146.354l-3.5 3.5a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 0-.708l3.5-3.5A.5.5 0 0 1 7.5 7h.5v-.5a.5.5 0 0 1 .116-.293l2.412-1.793A.5.5 0 0 1 10.5 4.5v-1.5z"/>
+                    <path d="M15.354 1.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708l3-3a.5.5 0 0 1 .708 0z"/>
+                </svg>
+                <span class="fw-bold">Cricket Insight</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/player">
+                            <i class="bi bi-person me-1"></i> Player Prediction
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/team">
+                            <i class="bi bi-people me-1"></i> Team Comparison
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/matches">
+                            <i class="bi bi-calendar-event me-1"></i> Live Matches
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Add this after the nav bar in each page -->
+    <div class="nav-spacer" style="height: 80px;"></div>
+    
+        <h1>Live Cricket Scores</h1>
+        
+        <a href="/analysis" class="analysis-button">Go to Analysis Page</a>
+        
+        <div class="last-updated">
+            Last updated: {{ current_time }}
+        </div>
+        
+        <script>
+            // Auto-refresh every 30 seconds
+            setTimeout(function(){
+                window.location.reload();
+            }, 30000);
+        </script>
+    
+    <h1>Live Cricket Scores</h1>
+    
+    Live Matches Section
+    <div class="match-section">
+        <h2 class="section-title">Live Matches</h2>
+        {% if matches.live %}
+            {% for match in matches.live %}
+            <div class="match-card live-card">
+                <div class="series-name">{{ match.series }}</div>
+                <div>
+                    <span class="match-status live-status">LIVE</span>
+                    <span>{{ match.status }}</span>
+                </div>
+                <div class="teams">
+                    {% if match.teams|length >= 2 %}
+                        {{ match.teams[0] }} vs {{ match.teams[1] }}
+                    {% else %}
+                        Teams information not available
+                    {% endif %}
+                </div>
+                
+                {% if match.scores %}
+                    {% for score in match.scores %}
+                    <div class="match-info">
+                        <span class="match-score">
+                            {{ score.inning }}: {{ score.runs }}/{{ score.wickets }} ({{ score.overs }})
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="match-name">{{ match.name }} ({{ match.matchType }})</div>
+                <div class="match-venue">{{ match.venue }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-matches">
+                No live matches currently. Check back later!
+                <div style="margin-top: 10px;">
+                    <small>If you expected matches to be live, the API might not be updating.</small>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    Upcoming Matches Section
+    <div class="match-section">
+        <h2 class="section-title">Upcoming Matches</h2>
+        {% if matches.upcoming %}
+            {% for match in matches.upcoming %}
+            <div class="match-card upcoming-card">
+                <div class="series-name">{{ match.series }}</div>
+                <div>
+                    <span class="match-status upcoming-status">UPCOMING</span>
+                </div>
+                <div class="teams">
+                    {% if match.teams|length >= 2 %}
+                        {{ match.teams[0] }} vs {{ match.teams[1] }}
+                    {% else %}
+                        Teams information not available
+                    {% endif %}
+                </div>
+                <div class="match-name">{{ match.name }} ({{ match.matchType }})</div>
+                <div class="match-info">
+                    <span>Starts: {{ match.date }}</span>
+                    <span>{{ match.venue }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-matches">No upcoming matches scheduled</div>
+        {% endif %}
+    </div>
+
+    Completed Matches Section
+    <div class="match-section">
+        <h2 class="section-title">Recent Results</h2>
+        {% if matches.completed %}
+            {% for match in matches.completed %}
+            <div class="match-card completed-card">
+                <div class="series-name">{{ match.series }}</div>
+                <div>
+                    <span class="match-status completed-status">COMPLETED</span>
+                </div>
+                <div class="teams">
+                    {% if match.teams|length >= 2 %}
+                        {{ match.teams[0] }} vs {{ match.teams[1] }}
+                    {% else %}
+                        Teams information not available
+                    {% endif %}
+                </div>
+                <div class="match-result">{{ match.status }}</div>
+                <div class="match-name">{{ match.name }} ({{ match.matchType }})</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-matches">No recent completed matches</div>
+        {% endif %}
+    </div>
+
+    <div class="last-updated">
+        Last updated: {{ current_time }}
+    </div>
+
+    <script>
+        // Auto-refresh every 30 seconds
+        setTimeout(function(){
+            window.location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

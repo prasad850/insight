@@ -1,0 +1,122 @@
+<!-- team.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Match Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/team.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cricket me-2" viewBox="0 0 16 16">
+                    <path d="M11.5 2.5a.5.5 0 0 1 .5-.5c.862 0 1.573.24 2.125.627.543.384.875.946.875 1.554 0 .606-.323 1.16-.875 1.545-.552.388-1.263.624-2.125.624a.5.5 0 0 1-.5-.5v-1.71l-1.4-.7-1.245 2.24a.5.5 0 0 1-.23.253l-2.955 1.58a.5.5 0 0 1-.586-.059L.5 5.5a.5.5 0 0 1 .146-.354l3.53-3.53a.5.5 0 0 1 .354-.146h1.293a.5.5 0 0 1 .253.115l2.412 1.793a.5.5 0 0 1 .116.293v1.677l1.4.7zm-1 .5v1.82a.5.5 0 0 1-.116.293L8.5 7.5v.5a.5.5 0 0 1-.146.354l-3.5 3.5a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 0-.708l3.5-3.5A.5.5 0 0 1 7.5 7h.5v-.5a.5.5 0 0 1 .116-.293l2.412-1.793A.5.5 0 0 1 10.5 4.5v-1.5z"/>
+                    <path d="M15.354 1.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708l3-3a.5.5 0 0 1 .708 0z"/>
+                </svg>
+                <span class="fw-bold">Cricket Insight</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/player">
+                            <i class="bi bi-person me-1"></i> Player Prediction
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/team">
+                            <i class="bi bi-people me-1"></i> Team Comparison
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/matches">
+                            <i class="bi bi-calendar-event me-1"></i> Live Matches
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Add this after the nav bar in each page -->
+    <div class="nav-spacer" style="height: 80px;"></div>
+    <div class="team-container">
+        <h1 class="team-title">IPL Match Predictor</h1>
+        
+        <div class="form-container">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="team1">Select Team 1:</label>
+                    <select name="team1" id="team1" required>
+                        <option value="">-- Select Team --</option>
+                        {% for team in teams %}
+                            <option value="{{ team }}" {% if team == team1 %}selected{% endif %}>{{ team }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="team2">Select Team 2:</label>
+                    <select name="team2" id="team2" required>
+                        <option value="">-- Select Team --</option>
+                        {% for team in teams %}
+                            <option value="{{ team }}" {% if team == team2 %}selected{% endif %}>{{ team }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-btn">Predict Winner</button>
+            </form>
+        </div>
+        
+        {% if prediction %}
+        <div class="result-container">
+            <div class="winner">
+                Predicted Winner: {{ prediction.winner }}
+            </div>
+            
+            <div class="team-stats">
+                <div class="team-stat">
+                    <div class="team-name">{{ team1 }}</div>
+                    <div>Overall Win Rate: {{ prediction.team1_win_rate }}%</div>
+                    <div>Win Probability: {{ prediction.team1_win_percentage }}%</div>
+                    <div class="progress-container">
+                        <div class="progress-bar team1-progress" style="width: {{ prediction.team1_win_percentage }}%">
+                            {% if prediction.team1_win_percentage > 15 %}{{ prediction.team1_win_percentage }}%{% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-stat">
+                    <div class="team-name">{{ team2 }}</div>
+                    <div>Overall Win Rate: {{ prediction.team2_win_rate }}%</div>
+                    <div>Win Probability: {{ prediction.team2_win_percentage }}%</div>
+                    <div class="progress-container">
+                        <div class="progress-bar team2-progress" style="width: {{ prediction.team2_win_percentage }}%">
+                            {% if prediction.team2_win_percentage > 15 %}{{ prediction.team2_win_percentage }}%{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="confidence">
+                Confidence Difference: {{ prediction.confidence }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!-- player.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Player Performance Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cricket me-2" viewBox="0 0 16 16">
+                    <path d="M11.5 2.5a.5.5 0 0 1 .5-.5c.862 0 1.573.24 2.125.627.543.384.875.946.875 1.554 0 .606-.323 1.16-.875 1.545-.552.388-1.263.624-2.125.624a.5.5 0 0 1-.5-.5v-1.71l-1.4-.7-1.245 2.24a.5.5 0 0 1-.23.253l-2.955 1.58a.5.5 0 0 1-.586-.059L.5 5.5a.5.5 0 0 1 .146-.354l3.53-3.53a.5.5 0 0 1 .354-.146h1.293a.5.5 0 0 1 .253.115l2.412 1.793a.5.5 0 0 1 .116.293v1.677l1.4.7zm-1 .5v1.82a.5.5 0 0 1-.116.293L8.5 7.5v.5a.5.5 0 0 1-.146.354l-3.5 3.5a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 0-.708l3.5-3.5A.5.5 0 0 1 7.5 7h.5v-.5a.5.5 0 0 1 .116-.293l2.412-1.793A.5.5 0 0 1 10.5 4.5v-1.5z"/>
+                    <path d="M15.354 1.646a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708l3-3a.5.5 0 0 1 .708 0z"/>
+                </svg>
+                <span class="fw-bold">Cricket Insight</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/player">
+                            <i class="bi bi-person me-1"></i> Player Prediction
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/team">
+                            <i class="bi bi-people me-1"></i> Team Comparison
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/matches">
+                            <i class="bi bi-calendar-event me-1"></i> Live Matches
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Add this after the nav bar in each page -->
+    <div class="nav-spacer" style="height: 80px;"></div>
+    <div class="player-container">
+        <h1 class="player-title">IPL Player Performance Predictor</h1>
+
+        <form method="POST" id="predictionForm">
+            <div class="form-group">
+                <label for="team">Select Team:</label>
+                <select name="team" id="team" required onchange="handleSelectChange(this)">
+                    <option value="">-- Choose Team --</option>
+                    {% for t in teams %}
+                        <option value="{{ t }}" {% if t == team %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+                <div id="team-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Select Player Type:</label>
+                <select name="role" id="role" required onchange="handleSelectChange(this)">
+                    <option value="">-- Choose Role --</option>
+                    <option value="batsman" {% if role == 'batsman' %}selected{% endif %}>Batsman</option>
+                    <option value="bowler" {% if role == 'bowler' %}selected{% endif %}>Bowler</option>
+                </select>
+                <div id="role-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="player">Select Player:</label>
+                <select name="player" id="player" required>
+                    <option value="">-- Choose Player --</option>
+                    {% for p in players %}
+                        <option value="{{ p }}" {% if p == player %}selected{% endif %}>{{ p }}</option>
+                    {% endfor %}
+                </select>
+                <div id="player-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="opponent">Select Opponent:</label>
+                <select name="opponent" id="opponent" required>
+                    <option value="">-- Choose Opponent --</option>
+                    {% for o in opponents %}
+                        <option value="{{ o }}" {% if o == opponent %}selected{% endif %}>{{ o }}</option>
+                    {% endfor %}
+                </select>
+                <div id="opponent-error" class="error-message"></div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Predict Performance</button>
+            <div class="loading" id="loadingIndicator">
+                <div class="loading-spinner"></div>
+                <p>Analyzing performance data...</p>
+            </div>
+        </form>
+
+        {% if prediction %}
+            <div class="result-card">
+                <h2>Predicted Performance</h2>
+                <div class="prediction-value">{{ prediction.split('(')[0] }}</div>
+                {% if '(' in prediction and ')' in prediction %}
+                    <div class="player-stats">{{ prediction.split('(')[1].split(')')[0] }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('predictionForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Validate team
+                if (!document.getElementById('team').value) {
+                    document.getElementById('team-error').textContent = 'Please select a team';
+                    isValid = false;
+                } else {
+                    document.getElementById('team-error').textContent = '';
+                }
+                
+                // Validate role
+                if (!document.getElementById('role').value) {
+                    document.getElementById('role-error').textContent = 'Please select a role';
+                    isValid = false;
+                } else {
+                    document.getElementById('role-error').textContent = '';
+                }
+                
+                // Validate player
+                if (!document.getElementById('player').value) {
+                    document.getElementById('player-error').textContent = 'Please select a player';
+                    isValid = false;
+                } else {
+                    document.getElementById('player-error').textContent = '';
+                }
+                
+                // Validate opponent
+                if (!document.getElementById('opponent').value) {
+                    document.getElementById('opponent-error').textContent = 'Please select an opponent';
+                    isValid = false;
+                } else {
+                    document.getElementById('opponent-error').textContent = '';
+                }
+                
+                if (isValid) {
+                    submitBtn.disabled = true;
+                    loadingIndicator.style.display = 'block';
+                } else {
+                    e.preventDefault();
+                }
+            });
+            
+            // Handle select changes
+            window.handleSelectChange = function(selectElement) {
+                const playerSelect = document.getElementById('player');
+                const opponentSelect = document.getElementById('opponent');
+                const form = document.getElementById('predictionForm');
+                
+                // Clear existing hidden inputs
+                const existingHidden = form.querySelectorAll('input[type="hidden"]');
+                existingHidden.forEach(el => el.remove());
+                
+                // Preserve selections
+                if (playerSelect.value) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'preserve_player';
+                    input.value = playerSelect.value;
+                    form.appendChild(input);
+                }
+                
+                if (opponentSelect.value) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'preserve_opponent';
+                    input.value = opponentSelect.value;
+                    form.appendChild(input);
+                }
+                
+                form.submit();
+            };
+            
+            // Restore preserved values from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const preservedPlayer = urlParams.get('preserve_player');
+            const preservedOpponent = urlParams.get('preserve_opponent');
+            
+            if (preservedPlayer) {
+                document.getElementById('player').value = preservedPlayer;
+            }
+            if (preservedOpponent) {
+                document.getElementById('opponent').value = preservedOpponent;
+            }
+        });
+    </script>
+</body>
+</html>
