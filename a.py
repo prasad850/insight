@@ -5,6 +5,7 @@ import os
 import random
 import pandas as pd
 import requests
+from requests import Session
 import json
 import google.generativeai as genai
 from datetime import datetime
@@ -280,4 +281,5 @@ def analysis():
     return render_template("index.html")
 
 if __name__ == "__main__":
+
     app.run(host='0.0.0.0', port=5000, debug=True)
